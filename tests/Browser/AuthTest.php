@@ -41,7 +41,7 @@ class AuthTest extends DuskTestCase
         //valid user
         $this->browse(function (Browser $browser) {
             $browser->visit(route('login'))
-                ->type('email', 'user@fblog.com')
+                ->type('email', 'usera@fblog.com')
                 ->type('password', 'secret')
                 ->press(trans('labels.login'))
                 ->assertPathIs('/');
