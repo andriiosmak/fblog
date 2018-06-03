@@ -5,7 +5,7 @@ namespace Tests\Browser\Pages;
 use App\Models\Post;
 use Laravel\Dusk\Browser;
 
-class EditPostPage extends Page
+class ViewPostPage extends Page
 {
     /**
      * Post
@@ -33,26 +33,22 @@ class EditPostPage extends Page
      */
     public function url() : string
     {
-        return route('post.edit', ['id' => $this->post->id], false);
+        return route('post.show', ['id' => $this->post->id], false);
     }
 
     /**
      * Assert that the browser is on the page.
      *
-     * @param  Browser  $browser
+     * @param  \Laravel\Dusk\Browser  $browser
      * @return void
      */
     public function assert(Browser $browser) : void
     {
         $browser->assertPathIs($this->url())
-                ->assertTitle(trans('labels.laravel'))
-                ->assertSee(trans('labels.title'))
-                ->assertSee(trans('labels.description'))
-                ->assertSee(trans('labels.body'))
-                ->assertSeeLink(trans('labels.back'))
-                ->assertInputValue('title', $this->post->title)
-                ->assertInputValue('description', $this->post->description)
-                ->assertInputValue('body', $this->post->body);
+            ->assertTitle(trans('labels.laravel'))
+            ->assertSee($this->post->title)
+            ->assertSee($this->post->body)
+            ->assertSeeLink(trans('labels.back'));
     }
 
     /**

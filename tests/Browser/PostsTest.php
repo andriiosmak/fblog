@@ -3,6 +3,7 @@
 namespace Tests\Browser;
 
 use Tests\Browser\Pages\HomePage;
+use Tests\Browser\Pages\ViewPostPage;
 use Tests\Browser\Pages\CreatePostPage;
 use Tests\Browser\Pages\EditPostPage;
 use Tests\DuskTestCase;
@@ -96,6 +97,22 @@ class PostsTest extends DuskTestCase
                 ->assertSee($description)
                 ->assertSee($user->name)
                 ->assertSee(trans('messages.post.create.success'));
+        });
+    }
+
+
+    /**
+     * View Post Page Test.
+     *
+     * @return void
+     */
+    public function testViewPostPage() : void
+    {
+        $this->browse(function (Browser $browser) {
+            $user = self::getUser();
+            $post = self::getPost();
+            $browser->loginAs($user)
+                ->visit(new ViewPostPage($post));
         });
     }
 
