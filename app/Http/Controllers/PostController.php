@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use App\Repositories\PostRepository;
@@ -52,12 +53,11 @@ class PostController extends Controller
      * Store a newly created post in storage.
      *
      * @param  \App\Http\Requests\CreatePostRequest  $request
-     * @param  \App\Repositories\PostRepository      $repository
      * @param  \Illuminate\Auth\AuthManager          $auth
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(CreatePostRequest $request, PostRepository $repository, AuthManager $auth) : RedirectResponse
+    public function store(CreatePostRequest $request, AuthManager $auth) : RedirectResponse
     {
         $data = $request->only([
             'title',
@@ -75,13 +75,13 @@ class PostController extends Controller
      * Display the specified resource.
      *
      * @param  \App\Repositories\PostRepository  $repository
-     * @param  string                            $id
+     * @param  string                            $postId
      *
      * @return \Illuminate\View\View
      */
-    public function show(PostRepository $repository, string $id) : View
+    public function show(PostRepository $repository, string $postId) : View
     {
-        $post = $repository->find($id);
+        $post = $repository->find($postId);
 
         return view('/posts/show', ['post' => $post]);
     }
@@ -90,15 +90,18 @@ class PostController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  \App\Http\Requests\CreatePostRequest  $request
-     * @param  string                                $id
+     * @param  \Illuminate\Auth\AuthManager          $auth
+     * @param  string                                $postId
      *
      * @return \Illuminate\View\View
      */
-    public function edit(PostRepository $repository, string $id) : View
+    public function edit(PostRepository $repository, AuthManager $auth, string $postId) : View
     {
-        $post = $repository->find($id);
+        $post = $repository->find($postId);
 
-        $this->checkAccess($post);
+        if (!$auth->user()->can('update', $post)) {
+            abort(404);
+        }
 
         return view('/posts/edit', ['post' => $post]);
     }
@@ -108,15 +111,22 @@ class PostController extends Controller
      *
      * @param  \App\Http\Requests\CreatePostRequest  $request
      * @param  \App\Repositories\PostRepository      $repository
-     * @param  string                                $id
+     * @param  \Illuminate\Auth\AuthManager          $auth
+     * @param  string                                $postId
      *
      * @return \Illuminate\Http\Response
      */
-    public function update(CreatePostRequest $request, PostRepository $repository, string $id) : RedirectResponse
-    {
-        $post = $repository->find($id);
+    public function update(
+        CreatePostRequest $request,
+        PostRepository $repository,
+        AuthManager $auth,
+        string $postId
+    ) : RedirectResponse {
+        $post = $repository->find($postId);
 
-        $this->checkAccess($post);
+        if (!$auth->user()->can('update', $post)) {
+            abort(404);
+        }
 
         $result = $post->update($request->only([
             'title',
@@ -135,36 +145,23 @@ class PostController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  \App\Repositories\PostRepository  $repository
-     * @param  string                            $id
+     * @param  \Illuminate\Auth\AuthManager      $auth
+     * @param  string                            $postId
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy(PostRepository $repository, string $id) : RedirectResponse
+    public function destroy(PostRepository $repository, AuthManager $auth, string $postId) : RedirectResponse
     {
-        $post = $repository->find($id);
+        $post = $repository->find($postId);
 
-        $this->checkAccess($post);
+        if (!$auth->user()->can('delete', $post)) {
+            abort(404);
+        }
 
-        $result = $post->delete();
-
-        if (!$result) {
+        if (!$post->delete()) {
             return redirect()->route('post.index')->withErrors([trans('messages.post.delete.failure')]);
         }
 
         return redirect()->route('post.index')->with('success', trans('messages.post.delete.success'));
-    }
-
-    /**
-     * Check whether user har a right to change a post.
-     *
-     * @param  App\Models\Post  $post
-     *
-     * @return void
-     */
-    private function checkAccess(Post $post) : void
-    {
-        if (Gate::denies('change-post', $post)) {
-            abort(404);
-        }
     }
 }
