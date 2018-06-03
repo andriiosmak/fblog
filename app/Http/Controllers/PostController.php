@@ -12,6 +12,7 @@ use App\Http\Requests\UpdatePostRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Auth\AuthManager;
+use Symfony\Component\HttpFoundation\Response;
 
 class PostController extends Controller
 {
@@ -100,7 +101,7 @@ class PostController extends Controller
         $post = $repository->find($postId);
 
         if (!$auth->user()->can('update', $post)) {
-            abort(404);
+            abort(Response::HTTP_NOT_FOUND);
         }
 
         return view('/posts/edit', ['post' => $post]);
@@ -125,7 +126,7 @@ class PostController extends Controller
         $post = $repository->find($postId);
 
         if (!$auth->user()->can('update', $post)) {
-            abort(404);
+            abort(Response::HTTP_NOT_FOUND);
         }
 
         $result = $post->update($request->only([
@@ -155,7 +156,7 @@ class PostController extends Controller
         $post = $repository->find($postId);
 
         if (!$auth->user()->can('delete', $post)) {
-            abort(404);
+            abort(Response::HTTP_NOT_FOUND);
         }
 
         if (!$post->delete()) {
