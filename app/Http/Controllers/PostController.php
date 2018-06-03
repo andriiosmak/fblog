@@ -7,7 +7,7 @@ use App\Models\User;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use App\Repositories\PostRepository;
-use App\Http\Requests\CreatePostRequest;
+use App\Http\Requests\PostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
@@ -52,12 +52,12 @@ class PostController extends Controller
     /**
      * Store a newly created post in storage.
      *
-     * @param  \App\Http\Requests\CreatePostRequest  $request
-     * @param  \Illuminate\Auth\AuthManager          $auth
+     * @param  \App\Http\Requests\PostRequest  $request
+     * @param  \Illuminate\Auth\AuthManager    $auth
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(CreatePostRequest $request, AuthManager $auth) : RedirectResponse
+    public function store(PostRequest $request, AuthManager $auth) : RedirectResponse
     {
         $data = $request->only([
             'title',
@@ -89,9 +89,9 @@ class PostController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Http\Requests\CreatePostRequest  $request
-     * @param  \Illuminate\Auth\AuthManager          $auth
-     * @param  string                                $postId
+     * @param  \App\Http\Requests\PostRequest  $request
+     * @param  \Illuminate\Auth\AuthManager    $auth
+     * @param  string                          $postId
      *
      * @return \Illuminate\View\View
      */
@@ -109,15 +109,15 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\CreatePostRequest  $request
-     * @param  \App\Repositories\PostRepository      $repository
-     * @param  \Illuminate\Auth\AuthManager          $auth
-     * @param  string                                $postId
+     * @param  \App\Http\Requests\PostRequest    $request
+     * @param  \App\Repositories\PostRepository  $repository
+     * @param  \Illuminate\Auth\AuthManager      $auth
+     * @param  string                            $postId
      *
      * @return \Illuminate\Http\Response
      */
     public function update(
-        CreatePostRequest $request,
+        PostRequest $request,
         PostRepository $repository,
         AuthManager $auth,
         string $postId
