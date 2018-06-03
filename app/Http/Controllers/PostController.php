@@ -10,6 +10,7 @@ use App\Http\Requests\CreatePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Auth\AuthManager;
 
 class PostController extends Controller
 {
@@ -52,10 +53,11 @@ class PostController extends Controller
      *
      * @param  \App\Http\Requests\CreatePostRequest  $request
      * @param  \App\Repositories\PostRepository      $repository
+     * @param  \Illuminate\Auth\AuthManager          $auth
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(CreatePostRequest $request, PostRepository $repository) : RedirectResponse
+    public function store(CreatePostRequest $request, PostRepository $repository, AuthManager $auth) : RedirectResponse
     {
         $data = $request->only([
             'title',
@@ -64,7 +66,7 @@ class PostController extends Controller
         ]);
         $data['created_at'] = time();
 
-        auth()->user()->posts()->create($data);
+        $auth->user()->posts()->create($data);
 
         return redirect()->route('post.index')->with('success', trans('messages.post.create.success'));
     }
