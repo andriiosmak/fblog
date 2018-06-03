@@ -52,6 +52,7 @@ class PostController extends Controller
 
     /**
      * Store a newly created post in storage.
+     * Form vadilation was implemented in PostRequest.
      *
      * @param  \App\Http\Requests\PostRequest  $request
      * @param  \Illuminate\Auth\AuthManager    $auth
@@ -98,8 +99,10 @@ class PostController extends Controller
      */
     public function edit(PostRepository $repository, AuthManager $auth, string $postId) : View
     {
+        //Retrieves a post. Redirects to 404 in case of wrong $postId.
         $post = $repository->find($postId);
 
+        //Checks whether user is going to edit his own post
         if (!$auth->user()->can('update', $post)) {
             abort(Response::HTTP_NOT_FOUND);
         }
@@ -109,6 +112,7 @@ class PostController extends Controller
 
     /**
      * Update the specified resource in storage.
+     * Form vadilation was implemented in PostRequest.
      *
      * @param  \App\Http\Requests\PostRequest    $request
      * @param  \App\Repositories\PostRepository  $repository
@@ -123,8 +127,10 @@ class PostController extends Controller
         AuthManager $auth,
         string $postId
     ) : RedirectResponse {
+        //Retrieves a post. Redirects to 404 in case of wrong $postId.
         $post = $repository->find($postId);
 
+        //Checks whether user is going to update his own post
         if (!$auth->user()->can('update', $post)) {
             abort(Response::HTTP_NOT_FOUND);
         }
@@ -153,8 +159,10 @@ class PostController extends Controller
      */
     public function destroy(PostRepository $repository, AuthManager $auth, string $postId) : RedirectResponse
     {
+        //Retrieves a post. Redirects to 404 in case of wrong $postId
         $post = $repository->find($postId);
 
+        //Checks whether user is going to delete his own post
         if (!$auth->user()->can('delete', $post)) {
             abort(Response::HTTP_NOT_FOUND);
         }
