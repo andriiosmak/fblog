@@ -18,6 +18,11 @@ class PostRepository extends BaseRepository
         return Post::class;
     }
 
+    /**
+     * Get all posts
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
     public function getAllPosts() : Collection
     {
         return $this->scopeQuery(function ($query) {

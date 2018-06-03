@@ -3,16 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
-use App\Models\User;
 use Illuminate\View\View;
-use Illuminate\Http\Request;
 use App\Repositories\PostRepository;
 use App\Http\Requests\PostRequest;
-use App\Http\Requests\UpdatePostRequest;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Auth\AuthManager;
-use Symfony\Component\HttpFoundation\Response;
 
 class PostController extends Controller
 {
@@ -102,7 +97,7 @@ class PostController extends Controller
      * @param  \App\Http\Requests\PostRequest  $request
      * @param  \App\Models\Post                $post
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(
         PostRequest $request,
@@ -124,7 +119,7 @@ class PostController extends Controller
      *
      * @param  \App\Models\Post  $post
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Post $post) : RedirectResponse
     {

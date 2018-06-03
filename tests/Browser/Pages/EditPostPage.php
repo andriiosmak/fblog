@@ -45,14 +45,14 @@ class EditPostPage extends Page
     public function assert(Browser $browser) : void
     {
         $browser->assertPathIs($this->url())
-                ->assertTitle(trans('labels.laravel'))
-                ->assertSee(trans('labels.title'))
-                ->assertSee(trans('labels.description'))
-                ->assertSee(trans('labels.body'))
-                ->assertSeeLink(trans('labels.back'))
-                ->assertInputValue('title', $this->post->title)
-                ->assertInputValue('description', $this->post->description)
-                ->assertInputValue('body', $this->post->body);
+            ->assertTitle(trans('labels.laravel'))
+            ->assertSee(trans('labels.title'))
+            ->assertSee(trans('labels.description'))
+            ->assertSee(trans('labels.body'))
+            ->assertSeeLink(trans('labels.back'))
+            ->assertInputValue('title', $this->post->title)
+            ->assertInputValue('description', $this->post->description)
+            ->assertInputValue('body', $this->post->body);
     }
 
     /**
