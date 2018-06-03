@@ -4,7 +4,7 @@ namespace Tests\Browser\Pages;
 
 use Laravel\Dusk\Browser;
 
-class HomePage extends Page
+class CreatePostPage extends Page
 {
     /**
      * Get the URL for the page.
@@ -13,7 +13,7 @@ class HomePage extends Page
      */
     public function url() : string
     {
-        return route('home', [], false);
+        return route('post.create', [], false);
     }
 
     /**
@@ -26,7 +26,10 @@ class HomePage extends Page
     {
         $browser->assertPathIs($this->url())
             ->assertTitle(trans('labels.laravel'))
-            ->assertSee(trans('labels.new'));
+            ->assertSee(trans('labels.title'))
+            ->assertSee(trans('labels.description'))
+            ->assertSee(trans('labels.body'))
+            ->assertSeeLink(trans('labels.back'));
     }
 
     /**

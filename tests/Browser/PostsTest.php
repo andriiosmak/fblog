@@ -2,6 +2,9 @@
 
 namespace Tests\Browser;
 
+use Tests\Browser\Pages\HomePage;
+use Tests\Browser\Pages\CreatePostPage;
+use Tests\Browser\Pages\EditPostPage;
 use Tests\DuskTestCase;
 use Laravel\Dusk\Browser;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -31,8 +34,7 @@ class PostsTest extends DuskTestCase
         $this->browse(function (Browser $browser) {
             $user = self::getUser();
             $browser->loginAs($user)
-                ->visit(route('home'))
-                ->assertSee(trans('labels.new'));
+                ->visit(new HomePage);
         });
     }
 
@@ -46,12 +48,7 @@ class PostsTest extends DuskTestCase
         $this->browse(function (Browser $browser) {
             $user = self::getUser();
             $browser->loginAs($user)
-                ->visit(route('post.create'))
-                ->assertTitle(trans('labels.laravel'))
-                ->assertSee(trans('labels.title'))
-                ->assertSee(trans('labels.description'))
-                ->assertSee(trans('labels.body'))
-                ->assertSeeLink(trans('labels.back'));
+                ->visit(new CreatePostPage);
         });
     }
 
@@ -125,19 +122,12 @@ class PostsTest extends DuskTestCase
                 ->assertInputValueIsNot('body', '');
         });
 
+        //check page
         $this->browse(function (Browser $browser) {
             $user = self::getUser();
             $post = self::getPost();
             $browser->loginAs($user)
-                ->visit(route('post.edit', ['id' => $post->id]))
-                ->assertTitle(trans('labels.laravel'))
-                ->assertSee(trans('labels.title'))
-                ->assertSee(trans('labels.description'))
-                ->assertSee(trans('labels.body'))
-                ->assertSeeLink(trans('labels.back'))
-                ->assertInputValue('title', $post->title)
-                ->assertInputValue('description', $post->description)
-                ->assertInputValue('body', $post->body);
+                ->visit(new EditPostPage($post));
         });
     }
 

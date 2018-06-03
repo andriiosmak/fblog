@@ -4,6 +4,7 @@ namespace Tests\Browser;
 
 use Tests\DuskTestCase;
 use Laravel\Dusk\Browser;
+use Tests\Browser\Pages\LoginPage;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class AuthTest extends DuskTestCase
@@ -16,12 +17,7 @@ class AuthTest extends DuskTestCase
     public function testLoginPage() : void
     {
         $this->browse(function (Browser $browser) {
-            $browser->visit(route('login'))
-                ->assertTitle(trans('labels.laravel'))
-                ->assertSee(trans('labels.login'))
-                ->assertSee(trans('labels.email'))
-                ->assertSee(trans('labels.password'))
-                ->assertSeeLink(trans('labels.login'));
+            $browser->visit(new LoginPage);
         });
     }
 
