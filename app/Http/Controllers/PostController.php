@@ -24,6 +24,7 @@ class PostController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        $this->authorizeResource(Post::class);
     }
 
     /**
@@ -73,37 +74,24 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Repositories\PostRepository  $repository
-     * @param  string                            $postId
+     * @param  \App\Models\Post $post
      *
      * @return \Illuminate\View\View
      */
-    public function show(PostRepository $repository, string $postId) : View
+    public function show(Post $post) : View
     {
-        $post = $repository->find($postId);
-
         return view('/posts/show', ['post' => $post]);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Http\Requests\PostRequest  $request
-     * @param  \Illuminate\Auth\AuthManager    $auth
-     * @param  string                          $postId
+     * @param  \App\Models\Post $post
      *
      * @return \Illuminate\View\View
      */
-    public function edit(PostRepository $repository, AuthManager $auth, string $postId) : View
+    public function edit(Post $post) : View
     {
-        //Retrieves a post. Redirects to 404 in case of wrong $postId.
-        $post = $repository->find($postId);
-
-        //Checks whether user is going to edit his own post
-        if (!$auth->user()->can('update', $post)) {
-            abort(Response::HTTP_NOT_FOUND);
-        }
-
         return view('/posts/edit', ['post' => $post]);
     }
 
@@ -111,34 +99,16 @@ class PostController extends Controller
      * Update the specified resource in storage.
      * Form vadilation was implemented in PostRequest.
      *
-     * @param  \App\Http\Requests\PostRequest    $request
-     * @param  \App\Repositories\PostRepository  $repository
-     * @param  \Illuminate\Auth\AuthManager      $auth
-     * @param  string                            $postId
+     * @param  \App\Http\Requests\PostRequest  $request
+     * @param  \App\Models\Post                $post
      *
      * @return \Illuminate\Http\Response
      */
     public function update(
         PostRequest $request,
-        PostRepository $repository,
-        AuthManager $auth,
-        string $postId
+        Post $post
     ) : RedirectResponse {
-        //Retrieves a post. Redirects to 404 in case of wrong $postId.
-        $post = $repository->find($postId);
-
-        //Checks whether user is going to update his own post
-        if (!$auth->user()->can('update', $post)) {
-            abort(Response::HTTP_NOT_FOUND);
-        }
-
-        $result = $post->update($request->only([
-            'title',
-            'description',
-            'body'
-        ]));
-
-        if (!$result) {
+        if (!$post->update($request->validated())) {
             return redirect()
                 ->route('post.index')
                 ->withErrors([trans('messages.post.update.failure')]);
@@ -152,22 +122,12 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Repositories\PostRepository  $repository
-     * @param  \Illuminate\Auth\AuthManager      $auth
-     * @param  string                            $postId
+     * @param  \App\Models\Post $post
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy(PostRepository $repository, AuthManager $auth, string $postId) : RedirectResponse
+    public function destroy(Post $post) : RedirectResponse
     {
-        //Retrieves a post. Redirects to 404 in case of wrong $postId
-        $post = $repository->find($postId);
-
-        //Checks whether user is going to delete his own post
-        if (!$auth->user()->can('delete', $post)) {
-            abort(Response::HTTP_NOT_FOUND);
-        }
-
         if (!$post->delete()) {
             return redirect()
                 ->route('post.index')
