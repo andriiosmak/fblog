@@ -61,16 +61,13 @@ class PostController extends Controller
      */
     public function store(PostRequest $request, AuthManager $auth) : RedirectResponse
     {
-        $data = $request->only([
-            'title',
-            'description',
-            'body',
-        ]);
-        $data['created_at'] = time();
+        $auth->user()
+            ->posts()
+            ->create($request->validated());
 
-        $auth->user()->posts()->create($data);
-
-        return redirect()->route('post.index')->with('success', trans('messages.post.create.success'));
+        return redirect()
+            ->route('post.index')
+            ->with('success', trans('messages.post.create.success'));
     }
 
     /**
@@ -142,10 +139,14 @@ class PostController extends Controller
         ]));
 
         if (!$result) {
-            return redirect()->route('post.index')->withErrors([trans('messages.post.update.failure')]);
+            return redirect()
+                ->route('post.index')
+                ->withErrors([trans('messages.post.update.failure')]);
         }
 
-        return redirect()->route('post.index')->with('success', trans('messages.post.update.success'));
+        return redirect()
+            ->route('post.index')
+            ->with('success', trans('messages.post.update.success'));
     }
 
     /**
@@ -168,9 +169,13 @@ class PostController extends Controller
         }
 
         if (!$post->delete()) {
-            return redirect()->route('post.index')->withErrors([trans('messages.post.delete.failure')]);
+            return redirect()
+                ->route('post.index')
+                ->withErrors([trans('messages.post.delete.failure')]);
         }
 
-        return redirect()->route('post.index')->with('success', trans('messages.post.delete.success'));
+        return redirect()
+            ->route('post.index')
+            ->with('success', trans('messages.post.delete.success'));
     }
 }
