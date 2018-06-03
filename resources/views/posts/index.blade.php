@@ -29,8 +29,12 @@
                         <p>{{ $post->description }}</p>
                         <div class="row buttons-row">
                             <a href="{{ route('post.show', ['id' => $post->id]) }}" class="btn btn-primary">{{ trans('labels.read_more') }}</a>
-                            <a href="{{ route('post.edit', ['id' => $post->id]) }}" class="btn btn-primary">{{ trans('labels.edit') }}</a>
-                            @include('partials.delete-button', ['id' => $post->id, 'route' => 'post.destroy'])
+                            @can('update', $post)
+                                <a href="{{ route('post.edit', ['id' => $post->id]) }}" class="btn btn-primary">{{ trans('labels.edit') }}</a>
+                            @endif
+                            @can('delete', $post)
+                                @include('partials.delete-button', ['id' => $post->id, 'route' => 'post.destroy'])
+                            @endif
                         </div>
                     </div>
                 </div>
